@@ -1,0 +1,66 @@
+---
+title: "Untitled"
+author: "Isabella Natke"
+date: "3/27/2021"
+output: html_document
+---
+
+```{r}
+# Homework Web Scraping
+library(rvest)
+library(dplyr)
+library(tidyverse)
+library(repurrrsive)
+listviewer::jsonedit(gh_users) 
+
+# 1)  Using the following link,  https://www.imdb.com/list/ls091520106/, R coding for Web scraping and Selector Gadget, produce the following tibble. (The first 5 rows are shown below)  
+# Use the step by step methodology suggested in class showing all steps and code.
+
+Link <- "https://www.imdb.com/list/ls091520106/"
+page = read_html(Link)
+Title = page%>% html_nodes(".lister-item-header a")%>%
+  html_text()
+Title
+
+Link <- "https://www.imdb.com/list/ls091520106/"
+page = read_html(Link)
+Ratings = page%>% html_nodes(".ipl-rating-star.small .ipl-rating-star__rating")%>%
+  html_text()
+Ratings
+
+Link <- "https://www.imdb.com/list/ls091520106/"
+page = read_html(Link)
+Runtime = page%>% html_nodes(".runtime")%>%
+  html_text()
+Runtime
+
+MoviesBucketList = data.frame(Title, Ratings, Runtime )
+MoviesBucketList
+
+# 2)
+# a) Explain or describe nested Lists.  (Three or four sentences)
+# First, a list is a series of objects that are different types. For example, a list can contain a double and two characters. Nested lists are lists within lists.
+# For example, Y = list(15, 5.6, "beta", a = (553.6, "cat")). a is nested within Y.
+
+# b) Open and explore data for Git Hub repos by running the following code gh_repos.  Comment on the structure and arrangement of the data (Two or three sentences)
+gh_repos
+# The structure and arrangement of the code is difficult to understand and is given in a long list. There is a lack of organization and structure.
+
+# c)  In two or three sentences, explain what happens to the data when you run the code; 
+repos <- tibble(repo = gh_repos)
+repos
+# This creates a better organized nested list version of gh_repos. This is much easier to understand.
+
+# d) Describe the data representation when the listserver tool is applied. And go into detail explaining why we have a nested List configuration. What do the numbers 30 and 68 represent ? (6 or 7 sentences)
+# Run the following code:
+  listviewer::jsonedit(gh_repos)
+# This shows a nested list in the "Viewer" tab. The array holds 6 lists (0-5), then each list holds more lists within them and even more lists within those. 
+# Although it may seem like a simple list at first glance, it is actually very large because of the nesting. The numbers 30 represent the number of lists in that list. The one labeled "3" has 26.  
+# If you open a list, for example the initial "0", there will be 30 lists within it that each hold 68 objects within those. 
+  
+# e)  Use and show R unesting code to produce the tibble below.
+  
+tibble(repos = gh_repos) %>% 
+  unnest_longer(repos) %>% 
+  unnest_wider(repos)
+```
